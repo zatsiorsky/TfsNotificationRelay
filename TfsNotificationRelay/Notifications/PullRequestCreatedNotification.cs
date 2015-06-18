@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.TeamFoundation.Git.Server;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
@@ -32,9 +33,23 @@ namespace DevCore.TfsNotificationRelay.Notifications
         public string PrUrl { get; set; }
         public string PrTitle { get; set; }
 
+        // Reviewers of the pull request 
+        public IEnumerable<TfsGitPullRequest.ReviewerWithVote> Reviewers { get; set; }
+
         public string UserName
         {
             get { return settings.StripUserDomain ? Utils.StripDomain(UniqueName) : UniqueName; }
+        }
+
+        public string Reviewer
+        {
+            get 
+            {
+                IEnumerator<TfsGitPullRequest.ReviewerWithVote> enumerator = Reviewers.GetEnumerator();
+                enumerator.MoveNext();
+                TfsGitPullRequest.ReviewerWithVote firstReviewer = enumerator.Current;
+                return firstReviewer.ToString();
+            }
         }
 
         public override IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
@@ -50,6 +65,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 PrUrl = this.PrUrl,
                 PrTitle = transform(this.PrTitle),
                 UserName = transform(this.UserName),
+                Reviewer = transform(this.Reviewer)
             };
 
             return new[] { bot.Text.PullRequestCreatedFormat.FormatWith(formatter) };
