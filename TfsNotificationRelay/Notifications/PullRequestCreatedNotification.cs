@@ -38,7 +38,9 @@ namespace DevCore.TfsNotificationRelay.Notifications
 
         public string UserName
         {
-            get { return settings.StripUserDomain ? Utils.StripDomain(UniqueName) : UniqueName; }
+            get {
+                return settings.StripUserDomain ? UserMap.TfsToSlack(Utils.StripDomain(UniqueName)) : UserMap.TfsToSlack(UniqueName); 
+            }
         }
 
         public string Reviewer
@@ -48,7 +50,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 IEnumerator<TfsGitPullRequest.ReviewerWithVote> enumerator = Reviewers.GetEnumerator();
                 enumerator.MoveNext();
                 TfsGitPullRequest.ReviewerWithVote firstReviewer = enumerator.Current;
-                return firstReviewer.ToString();
+                return UserMap.TfsToSlack(firstReviewer.ToString());
             }
         }
 

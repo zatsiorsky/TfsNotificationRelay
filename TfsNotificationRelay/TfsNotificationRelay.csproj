@@ -124,6 +124,7 @@
     <Compile Include="TfsNotificationRelayException.cs" />
     <Compile Include="TfsEvents.cs" />
     <Compile Include="TfsHelper.cs" />
+    <Compile Include="UserMap.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
