@@ -15,6 +15,7 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Configuration;
 using DevCore.TfsNotificationRelay.Configuration;
+using DevCore.TfsNotificationRelay;
 
 namespace TfsNotificationRelay.Tests
 {
@@ -31,6 +32,20 @@ namespace TfsNotificationRelay.Tests
             Assert.IsTrue(config.Bots[0].EventRules.Count > 0, "no rules");
             Assert.IsTrue(config.Bots.Count > 0, "No bots");
             Assert.IsTrue(config.Texts.Count > 0, "No texts");
+        }
+    }
+
+    [TestClass]
+    public class ExtensionTests
+    {
+        [TestMethod]
+        public void TestTfsToSlack()
+        {
+            string realname = "James.Zatsiorsky";
+            Assert.AreEqual(UserMap.TfsToSlack(realname), "@james.z");
+
+            string fakename = "Not.A.Real.User";
+            Assert.AreEqual(UserMap.TfsToSlack(fakename), "Not.A.Real.User");
         }
     }
 }

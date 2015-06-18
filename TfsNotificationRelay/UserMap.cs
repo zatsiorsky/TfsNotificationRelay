@@ -8,35 +8,25 @@ namespace DevCore.TfsNotificationRelay
 {
     public class UserMap
     {
-        public static Dictionary<string, string> map = new Dictionary<string, string>()
+        public static readonly Dictionary<string, string> map = new Dictionary<string, string>()
         {
             { "Anoop.Pv" ,"anooppv"},
             { "Ayush.Sahay", "ayush"},
             { "christopher.dudak", "chris"},
             { "Daniel.Spector", "dan"},
-            { "null", "dmcfarren"},
             { "E.Gomez-Echeverry", "eduardo"},
             { "Fariya.Wani", "fariya.wani"},
             { "fergal_sweeney", "fergal"},
             { "George.Vlatas", "george"},
-            { "null", "harshaborade"},
-            { "null", "hrishikesh"},
-            { "null", "james.kim"},
             { "James.Zatsiorsky", "james.z"},
-            { "null", "jashwin.rath"},
             { "Jay.Marciano", "jaymarciano"},
             { "Kevin.Brown", "kevinbrown"},
             { "Luke.Burnham" ,"luke"},
             { "Michael.Cavanaugh", "michael.cavanaugh"},
             { "Michael.Viar", "michaelviar"},
-            { "null", "nat"},
-            { "null", "rajesh.raghunathan"},
             { "Rakesh.Mohan", "rakesh.mohan"},
-            { "null", "ritu"},
             { "Ruchi.Karambelkar", "ruchi"},
-            { "null", "sampath.jayaprakash"},
             { "Shilpa.Saware", "shilpa"},
-            { "null", "vhinders"},
             { "v-Vladimir.Veevnik", "vladimir"}  
         };
 
