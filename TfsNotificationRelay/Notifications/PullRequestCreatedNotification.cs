@@ -50,7 +50,8 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 IEnumerator<TfsGitPullRequest.ReviewerWithVote> enumerator = Reviewers.GetEnumerator();
                 enumerator.MoveNext();
                 TfsGitPullRequest.ReviewerWithVote firstReviewer = enumerator.Current;
-                return UserMap.TfsToSlack(firstReviewer.ToString());
+                Guid name = firstReviewer.Reviewer;
+                return UserMap.TfsToSlack(name.ToString());
             }
         }
 
