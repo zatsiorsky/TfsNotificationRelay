@@ -40,6 +40,32 @@ namespace DevCore.TfsNotificationRelay.Notifications
             }
         }
 
+        // Removes the @username to clean up the Slack message
+        private string PrTitleCropped
+        {
+            get
+            {
+                string[] words = PrTitle.Split(new Char[] { ' ' });
+                string userName = "";
+                string[] newTitle = new string[words.Length - 1];
+
+                foreach (string word in words)
+                {
+                    if (word[0] == '@')
+                    {
+                        userName = word;
+                        break;
+                    }
+                }
+
+                IList<string> wordList = words.ToList<string>();
+                wordList.Remove(userName);
+
+                wordList.ToArray();
+                return string.Join(" ", wordList);
+            }
+        }
+
         public string Reviewer
         {
             get 
@@ -70,7 +96,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 RepoName = transform(this.RepoName),
                 PrId = this.PrId,
                 PrUrl = this.PrUrl,
-                PrTitle = transform(this.PrTitle),
+                PrTitle = transform(this.PrTitleCropped),
                 UserName = transform(this.UserName),
                 Reviewer = transform(this.Reviewer)
             };
