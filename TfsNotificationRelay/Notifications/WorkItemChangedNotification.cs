@@ -36,6 +36,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
         public bool IsAssignmentChanged { get; set; }
         public string AssignedTo { get; set; }
         public string State { get; set; }
+        public string Reason { get; set; }
 
         public string UserName
         {
@@ -64,7 +65,8 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 AssignedTo = transform(this.AssignedTo),
                 State = transform(this.State),
                 UserName = transform(this.UserName),
-                Action = FormatAction(bot)
+                Action = FormatAction(bot),
+                Reason = transform(this.Reason)
             };
             lines.Add(bot.Text.WorkItemchangedFormat.FormatWith(formatter));
             lines.Add(String.Format("State: {0}", State));
