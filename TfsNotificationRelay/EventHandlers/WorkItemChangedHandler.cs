@@ -46,7 +46,7 @@ namespace DevCore.TfsNotificationRelay.EventHandlers
                 IsStateChanged = ev.ChangedFields.StringFields.Any(f => f.ReferenceName == "System.State"),
                 IsAssignmentChanged = ev.ChangedFields.StringFields.Any(f => f.ReferenceName == "System.AssignedTo"),
                 State = ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.State").NewValue,
-                AssignedTo = ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.AssignedTo").NewValue,
+                AssignedTo = UserMap.TfsToSlack(ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.AssignedTo").NewValue),
                 Reason = ev.CoreFields.StringFields.Single(f => f.ReferenceName == "System.Reason").NewValue
             };
 

@@ -62,9 +62,9 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 WiTitle = transform(this.WiTitle),
                 IsStateChanged = this.IsStateChanged,
                 IsAssignmentChanged = this.IsAssignmentChanged,
-                AssignedTo = transform(this.AssignedTo),
+                AssignedTo = transform(UserMap.TfsToSlack(this.AssignedTo)),
                 State = transform(this.State),
-                UserName = transform(this.UserName),
+                UserName = transform(UserMap.TfsToSlack(this.UserName)),
                 Action = FormatAction(bot),
                 Reason = transform(this.Reason)
             };
