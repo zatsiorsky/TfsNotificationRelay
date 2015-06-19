@@ -58,6 +58,7 @@
     <Compile Include="SlackClient.cs" />
     <Compile Include="SlackHelper.cs" />
     <Compile Include="SlackNotifier.cs" />
+    <Compile Include="SlackUser.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TfsNotificationRelay\TfsNotificationRelay.csproj">

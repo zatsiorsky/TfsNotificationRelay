@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace DevCore.TfsNotificationRelay
 {
     public class UserMap
     {
+        private string SlackAPIToken = "xoxp-4780571987-5169200945-6585715173-2dc98e";
+
         public static readonly Dictionary<string, string> map = new Dictionary<string, string>()
         {
             { "Anoop.Pv" ,"U04PCHWQ1"},

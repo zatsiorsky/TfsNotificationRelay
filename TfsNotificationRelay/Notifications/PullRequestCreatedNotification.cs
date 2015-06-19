@@ -33,9 +33,6 @@ namespace DevCore.TfsNotificationRelay.Notifications
         public string PrUrl { get; set; }
         public string PrTitle { get; set; }
 
-        // Reviewers of the pull request 
-        public IEnumerable<TfsGitPullRequest.ReviewerWithVote> Reviewers { get; set; }
-
         public string UserName
         {
             get {
@@ -47,11 +44,18 @@ namespace DevCore.TfsNotificationRelay.Notifications
         {
             get 
             {
-                IEnumerator<TfsGitPullRequest.ReviewerWithVote> enumerator = Reviewers.GetEnumerator();
-                enumerator.MoveNext();
-                TfsGitPullRequest.ReviewerWithVote firstReviewer = enumerator.Current;
-                Guid name = firstReviewer.Reviewer;
-                return UserMap.TfsToSlack(name.ToString());
+                string res = "";
+                string[] words = PrTitle.Split(new Char [] {' '});
+                
+                foreach (string word in words)
+                {
+                    if (word[0] == '@')
+                    {
+                        res = word.Substring(1);
+                        break;
+                    }
+                }
+                return res == "" ? "Not specified" : UserMap.TfsToSlack(res);
             }
         }
 
