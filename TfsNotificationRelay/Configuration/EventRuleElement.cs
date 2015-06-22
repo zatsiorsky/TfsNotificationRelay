@@ -36,6 +36,24 @@ namespace DevCore.TfsNotificationRelay.Configuration
             get { return (bool)this["notify"]; }
         }
 
+        [ConfigurationProperty("excludeType")]
+        public string ExcludeType
+        {
+            get
+            {
+                return (string)this["excludeType"];
+            }
+        }
+
+        [ConfigurationProperty("excludeNew", DefaultValue = false)]
+        public bool ExcludeNew
+        {
+            get
+            {
+                return (bool)this["excludeNew"];
+            }
+        }
+
         [ConfigurationProperty("teamProjectCollection")]
         public string TeamProjectCollection
         {
