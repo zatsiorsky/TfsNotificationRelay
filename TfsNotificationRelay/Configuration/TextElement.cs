@@ -198,6 +198,20 @@ namespace DevCore.TfsNotificationRelay.Configuration
             get { return (string)this["assignedTo"]; }
         }
 
+        [ConfigurationProperty("historyMessage")]
+        public string HistoryMessage
+        {
+            get { return (string)this["historyMessage"];  }
+        }
+
+        [ConfigurationProperty("reason")]
+        public string Reason
+        {
+            get { return (string)this["reason"]; }
+        }
+
+
+
         [ConfigurationProperty("pullRequestCreatedFormat")]
         public string PullRequestCreatedFormat
         {

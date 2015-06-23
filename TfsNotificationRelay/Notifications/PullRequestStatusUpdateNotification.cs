@@ -62,7 +62,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 PrId = this.PrId,
                 PrUrl = this.PrUrl,
                 PrTitle = transform(this.PrTitle),
-                UserName = transform(this.UserName),
+                UserName = transform(UserMap.TfsToSlack(this.UserName)),
                 Action = FormatAction(bot)
             };
             return new[] { bot.Text.PullRequestStatusUpdateFormat.FormatWith(formatter) };

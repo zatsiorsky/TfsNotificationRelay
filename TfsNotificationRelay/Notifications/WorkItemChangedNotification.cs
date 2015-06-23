@@ -17,6 +17,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Microsoft.TeamFoundation.Client;
 
 namespace DevCore.TfsNotificationRelay.Notifications
 {
@@ -37,8 +39,38 @@ namespace DevCore.TfsNotificationRelay.Notifications
         public string AssignedTo { get; set; }
         public string State { get; set; }
         public string Reason { get; set; }
-        public string[] History { get; set; }
 
+        
+        public string History
+        {
+            get
+            {
+                var wi = GetWorkItemDetails(WiId);
+                string history = "\n";
+
+                // loop through all revisions, if necessary
+                for (int i = 0, len = wi.Revisions.Count; i < len; i++) {
+                    // found the latest message
+                    if (wi.Revisions[len - 1 - i]["History"].ToString() != "")
+                    {
+                        history += wi.Revisions[len - 1 - i]["History"].ToString();
+                        break;
+                    }
+
+                    // have we reached the end of the revisions?
+                    if (i == len - 1)
+                    {
+                        history = "None";
+                    }
+                    
+                }
+
+                return history;
+            }
+        }
+
+        
+  
         public string UserName
         {
             get { return settings.StripUserDomain ? Utils.StripDomain(UniqueName) : UniqueName; }
@@ -68,12 +100,20 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 UserName = transform(UserMap.TfsToSlack(this.UserName)),
                 Action = FormatAction(bot),
                 Reason = transform(this.Reason),
-                History = transform(this.History[0])
-
+                History = transform(this.History)
             };
             lines.Add(bot.Text.WorkItemchangedFormat.FormatWith(formatter));
             lines.Add(String.Format("State: {0}", State));
-            lines.Add(String.Format("AssignedTo: {0} ", AssignedTo));
+            if (AssignedTo != "")
+            {
+                lines.Add(String.Format("AssignedTo: {0} ", AssignedTo));
+            }
+            if (History != "None")
+            {
+                lines.Add(String.Format("HistoryMessage: {0}", History));
+            }
+            
+            lines.Add(String.Format("Reason: {0}", Reason));
 
             return lines;
         }
@@ -96,5 +136,18 @@ namespace DevCore.TfsNotificationRelay.Notifications
 
             return false;
         }
+
+        
+        public WorkItem GetWorkItemDetails(int id)
+        {
+
+            TfsTeamProjectCollection tfs = new TfsTeamProjectCollection(
+                new Uri(@"http://bil-qa-tfs2013:8080/tfs/TFSCollection01"), true);
+
+            var service = tfs.GetService<WorkItemStore>();
+
+            return service.GetWorkItem(id);
+        }
+        
     }
 }
