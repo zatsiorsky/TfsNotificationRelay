@@ -82,8 +82,9 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 || r.Events.HasFlag(TfsEvents.WorkItemAssignmentChange) && IsAssignmentChanged)
                 && collection.IsMatchOrNoPattern(r.TeamProjectCollection)
                 && ProjectName.IsMatchOrNoPattern(r.TeamProject)
-                && !(r.ExcludeType.Contains(WiType))
-                && !(IsNew && r.ExcludeNew)
+                && !(r.ExcludeType.Contains(WiType)) // check if excluding type
+                && !(IsNew && r.ExcludeNew) // check if excluding new
+                && !(r.ExcludeState.Contains(State)) // check if excluding state
                 );
             
 

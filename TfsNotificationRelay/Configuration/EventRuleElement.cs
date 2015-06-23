@@ -54,6 +54,15 @@ namespace DevCore.TfsNotificationRelay.Configuration
             }
         }
 
+        [ConfigurationProperty("excludeState")]
+        public string ExcludeState
+        {
+            get
+            {
+                return (string)this["excludeState"];
+            }
+        }
+
         [ConfigurationProperty("teamProjectCollection")]
         public string TeamProjectCollection
         {

@@ -49,7 +49,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 ChangesetUrl = this.ChangesetUrl,
                 ChangesetId = this.ChangesetId,
                 Comment = transform(this.Comment),
-                UserName = transform(this.UserName),
+                UserName = transform(UserMap.TfsToSlack(this.UserName)),
                 ProjectLinks = FormatProjectLinks(bot, transform)
             };
             return new[] { bot.Text.CheckinFormat.FormatWith(formatter) };
