@@ -37,6 +37,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
         public string AssignedTo { get; set; }
         public string State { get; set; }
         public string Reason { get; set; }
+        public string[] History { get; set; }
 
         public string UserName
         {
@@ -66,7 +67,9 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 State = transform(this.State),
                 UserName = transform(UserMap.TfsToSlack(this.UserName)),
                 Action = FormatAction(bot),
-                Reason = transform(this.Reason)
+                Reason = transform(this.Reason),
+                History = transform(this.History[0])
+
             };
             lines.Add(bot.Text.WorkItemchangedFormat.FormatWith(formatter));
             lines.Add(String.Format("State: {0}", State));
