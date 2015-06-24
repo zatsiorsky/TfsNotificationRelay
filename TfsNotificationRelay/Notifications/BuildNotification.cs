@@ -71,7 +71,7 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 DisplayName = transform(this.RequestedForDisplayName),
                 StartTime = this.StartTime,
                 FinishTime = this.FinishTime,
-                UserName = transform(this.UserName),
+                UserName = transform(UserMap.TfsToSlack(this.UserName)),
                 BuildDuration = FormatBuildDuration(bot),
                 DropLocation = this.DropLocation
             };
