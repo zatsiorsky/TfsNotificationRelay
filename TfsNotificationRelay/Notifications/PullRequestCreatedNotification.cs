@@ -77,61 +77,34 @@ namespace DevCore.TfsNotificationRelay.Notifications
             }
         }
 
-        // Removes the @username to clean up the Slack message
-        private string PrTitleCropped
-        {
-            get
-            {
-                string[] words = PrTitle.Split(new Char[] { ' ' });
-                string userName = "";
-                string[] newTitle = new string[words.Length - 1];
-
-                foreach (string word in words)
-                {
-                    if (word[0] == '@')
-                    {
-                        userName = word;
-                        break;
-                    }
-                }
-
-                IList<string> wordList = words.ToList<string>();
-                wordList.Remove(userName);
-
-                wordList.ToArray();
-                return string.Join(" ", wordList);
-            }
-        }
-
+        // gets the first reviewer
         public string Reviewer
         {
-            get 
-            {
-                string res = "";
-                string[] words = PrTitle.Split(new Char [] {' '});
-                
-                foreach (string word in words)
-                {
-                    if (word[0] == '@')
-                    {
-                        res = word.Substring(1);
-                        break;
-                    }
-                }
-                return res == "" ? "Not specified" : UserMap.TfsToSlack(res);
-            }
-        }
-
-
-        /*
-        public string newReviewer
-        {
             get
             {
-                string jsonString = new WebClient().DownloadString();
+                string[] repoSplit = RepoUri.Split(new char[] { '/' });
+                string account = repoSplit[2];
+                string collection = repoSplit[4];
+
+                string url = "http://" + account + "/tfs/" + collection +
+                 "/_apis/git/repositories/" + RepoId + "/pullrequests/" + PrId + "?api-version=1.0";
+                WebClient myClient = new WebClient();
+                myClient.Credentials = CredentialCache.DefaultCredentials;
+
+                string jsonString = myClient.DownloadString(url);
                 JObject json = JObject.Parse(jsonString);
+               
+                JToken reviewers;
+                if (json.TryGetValue("reviewers", out reviewers)) {
+                    JObject[] reviewersArr = reviewers.ToObject<JObject[]>();
+                    string uniquename = reviewersArr[0].GetValue("uniqueName").ToString();
+                    return settings.StripUserDomain ? UserMap.TfsToSlack(Utils.StripDomain(uniquename)) : UserMap.TfsToSlack(uniquename); 
+               }
+
+                // only get here if there are no reviewers
+                return "no one";
             }
-        } */
+        } 
 
         public override IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
         {
@@ -144,10 +117,9 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 RepoName = transform(this.RepoName),
                 PrId = this.PrId,
                 PrUrl = this.PrUrl,
-                PrTitle = transform(this.PrTitleCropped),
+                PrTitle = transform(this.PrTitle),
                 UserName = transform(this.UserName),
-                Reviewer = transform(this.Reviewer),
-                RepoId = this.RepoId
+                Reviewer = transform(this.Reviewer)
             };
 
             return new[] { bot.Text.PullRequestCreatedFormat.FormatWith(formatter) };
