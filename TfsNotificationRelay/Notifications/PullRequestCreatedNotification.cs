@@ -18,6 +18,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Git.Server;
 
+using Microsoft.TeamFoundation.Client;
+using Microsoft.TeamFoundation.Framework.Client;
+using Microsoft.TeamFoundation.Framework.Common;
+
+using Newtonsoft.Json.Linq;
+using System.Net;
+
 namespace DevCore.TfsNotificationRelay.Notifications
 {
     public class PullRequestCreatedNotification : BaseNotification
@@ -37,6 +44,36 @@ namespace DevCore.TfsNotificationRelay.Notifications
         {
             get {
                 return settings.StripUserDomain ? UserMap.TfsToSlack(Utils.StripDomain(UniqueName)) : UserMap.TfsToSlack(UniqueName); 
+            }
+        }
+
+        public string RepoId
+        {
+            get
+            {
+                // get the url 
+                string[] repoSplit = RepoUri.Split(new char[] { '/' });
+                string account = repoSplit[2];
+                string collection = repoSplit[4];
+
+                string newUri = "http://" + account + "/tfs/" + collection +
+                 "/_apis/git/repositories?api-version=1.0";
+
+                WebClient myClient = new WebClient();
+                myClient.Credentials = CredentialCache.DefaultCredentials;
+
+
+                string jsonString = myClient.DownloadString(newUri);
+                JObject json = JObject.Parse(jsonString);
+                JObject[] repos = json.GetValue("value").ToObject<JObject[]>();
+                foreach (JObject repo in repos)
+                {
+                    if (repo.GetValue("name").ToString() == RepoName)
+                    {
+                        return repo.GetValue("id").ToString();
+                    }
+                }
+                return "";
             }
         }
 
@@ -85,6 +122,17 @@ namespace DevCore.TfsNotificationRelay.Notifications
             }
         }
 
+
+        /*
+        public string newReviewer
+        {
+            get
+            {
+                string jsonString = new WebClient().DownloadString();
+                JObject json = JObject.Parse(jsonString);
+            }
+        } */
+
         public override IList<string> ToMessage(Configuration.BotElement bot, Func<string, string> transform)
         {
             var formatter = new
@@ -98,7 +146,8 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 PrUrl = this.PrUrl,
                 PrTitle = transform(this.PrTitleCropped),
                 UserName = transform(this.UserName),
-                Reviewer = transform(this.Reviewer)
+                Reviewer = transform(this.Reviewer),
+                RepoId = this.RepoId
             };
 
             return new[] { bot.Text.PullRequestCreatedFormat.FormatWith(formatter) };
