@@ -97,8 +97,31 @@ namespace DevCore.TfsNotificationRelay.Notifications
                 JToken reviewers;
                 if (json.TryGetValue("reviewers", out reviewers)) {
                     JObject[] reviewersArr = reviewers.ToObject<JObject[]>();
-                    string uniquename = reviewersArr[0].GetValue("uniqueName").ToString();
-                    return settings.StripUserDomain ? UserMap.TfsToSlack(Utils.StripDomain(uniquename)) : UserMap.TfsToSlack(uniquename); 
+                    int len = reviewersArr.Length;
+                    string[] uniquenames = new string[len];
+                    for (int i = 0; i < len; i++)
+                    {
+                        string uniquename = reviewersArr[i].GetValue("uniqueName").ToString();
+                        uniquenames[i] = settings.StripUserDomain ? UserMap.TfsToSlack(Utils.StripDomain(uniquename)) : UserMap.TfsToSlack(uniquename); 
+                    }
+
+                    if (len == 1)
+                    {
+                        return uniquenames[0];
+                    }
+                    else if (len == 2)
+                    {
+                        return uniquenames[0] + " and " + uniquenames[1];
+                    }
+                    else
+                    {
+                        string result = string.Join(", ", uniquenames, 0, len-1);
+                        return result + ", and " + uniquenames[len - 1];
+                    }
+
+
+
+                    
                }
 
                 // only get here if there are no reviewers
